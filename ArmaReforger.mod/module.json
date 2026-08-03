@@ -1,0 +1,68 @@
+{
+  "id": "arma-reforger",
+  "name": "Arma Reforger Dedicated Server",
+  "version": "1.1.1",
+  "author": "Shenniko",
+  "description": "WindowsGSH module for installing, configuring, and running an Arma Reforger dedicated server.",
+  "url": "https://github.com/WindowsGSH/WindowsGSH.ArmaReforger",
+  "homepage": "https://community.bohemia.net/wiki/Arma_Reforger:Server_Config",
+  "repository": "https://github.com/WindowsGSH/WindowsGSH.ArmaReforger",
+  "sourceUrl": "https://github.com/WindowsGSH/WindowsGSH.ArmaReforger",
+  "color": "#1E8449",
+  "moduleApiVersion": "1.0",
+  "minimumWindowsGshVersion": "0.1.0",
+  "type": "csharp",
+  "entry": "WindowsGSH.Modules.ArmaReforger.ArmaReforgerModule",
+  "steam": {
+    "appId": "1874900",
+    "anonymous": true,
+    "validate": true
+  },
+  "entryPoints": {
+    "start": "ArmaReforgerServer.exe",
+    "processName": "ArmaReforgerServer"
+  },
+  "runtime": {
+    "allowsEmbeddedConsole": true,
+    "portIncrements": 1,
+    "queryProtocol": "process",
+    "defaultArguments": "-profile .\\Saved -maxFPS {server.maxFps} -config .\\Configs\\server.json {server.additionalArguments}",
+    "stop": {
+      "strategy": "closeWindow",
+      "waitMilliseconds": 10000,
+      "killAfterTimeout": true
+    }
+  },
+  "capabilities": {
+    "directConnection": true
+  },
+  "configFields": [
+    { "key": "server.name", "label": "Server Name", "type": "Text", "defaultValue": "Arma Reforger Dedicated Server", "required": true, "group": "Server" },
+    { "key": "server.password", "label": "Join Password", "type": "Password", "defaultValue": "", "group": "Server" },
+    { "key": "server.adminPassword", "label": "In-game Admin Password", "type": "Password", "defaultValue": "", "group": "Server", "description": "Used with #login in game. Do not include spaces." },
+    { "key": "server.scenarioId", "label": "Scenario ID", "type": "Text", "defaultValue": "{ECC61978EDCC2B5A}Missions/23_Campaign.conf", "required": true, "group": "Server" },
+    { "key": "server.maxPlayers", "label": "Max Players", "type": "Number", "defaultValue": 32, "minimum": 1, "maximum": 128, "group": "Server" },
+    { "key": "server.visible", "label": "Publicly Visible", "type": "Boolean", "defaultValue": true, "group": "Server" },
+    { "key": "server.maxFps", "label": "Maximum Server FPS", "type": "Number", "defaultValue": 60, "minimum": 30, "maximum": 120, "group": "Performance", "description": "Bohemia strongly recommends limiting dedicated-server FPS." },
+    { "key": "game.battleEye", "label": "Enable BattlEye", "type": "Boolean", "defaultValue": true, "group": "Gameplay" },
+    { "key": "game.disableThirdPerson", "label": "Disable Third Person", "type": "Boolean", "defaultValue": false, "group": "Gameplay" },
+    { "key": "game.fastValidation", "label": "Fast Validation", "type": "Boolean", "defaultValue": true, "group": "Gameplay", "description": "Keep enabled on public servers, as required by Bohemia's hosting guidance." },
+    { "key": "network.bindAddress", "label": "Bind Address", "type": "Text", "defaultValue": "", "group": "Network", "description": "Leave empty to bind all interfaces. Set only for advanced multi-NIC configurations." },
+    { "key": "network.port", "label": "Public Game Port", "type": "Port", "defaultValue": 2001, "required": true, "minimum": 1, "maximum": 65535, "group": "Network" },
+    { "key": "network.queryPort", "label": "A2S Query Port", "type": "Port", "defaultValue": 17777, "minimum": 1, "maximum": 65535, "group": "Network" },
+    { "key": "rcon.enabled", "label": "Enable UDP RCON Endpoint", "type": "Boolean", "defaultValue": false, "group": "External Administration", "description": "Configures Reforger's UDP RCON endpoint for a compatible external client. WindowsGSH does not yet provide a Reforger RCON console." },
+    { "key": "rcon.port", "label": "UDP RCON Port", "type": "Port", "defaultValue": 19999, "minimum": 1, "maximum": 65535, "group": "External Administration", "visibleWhen": { "key": "rcon.enabled", "isTruthy": true } },
+    { "key": "rcon.password", "label": "UDP RCON Password", "type": "Password", "defaultValue": "", "group": "External Administration", "visibleWhen": { "key": "rcon.enabled", "isTruthy": true }, "description": "At least 3 characters and no spaces. Required by the game when RCON is enabled." },
+    { "key": "server.additionalArguments", "label": "Additional Arguments", "type": "CommandLine", "defaultValue": "", "group": "Launch" }
+  ],
+  "ports": [
+    { "id": "game", "name": "Game Port", "protocol": "udp", "configField": "network.port", "required": true },
+    { "id": "query", "name": "A2S Query Port", "protocol": "udp", "configField": "network.queryPort" },
+    { "id": "rcon", "name": "Reforger UDP RCON", "protocol": "udp", "configField": "rcon.port", "openExternally": false, "checkLocalListener": false }
+  ],
+  "backupTargets": [
+    { "key": "config", "label": "Server Configuration", "path": "Configs", "type": "directory", "required": true },
+    { "key": "profile", "label": "Server Profile and Saves", "path": "Saved", "type": "directory" }
+  ],
+  "addons": []
+}
